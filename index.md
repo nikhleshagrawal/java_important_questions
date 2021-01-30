@@ -1,37 +1,43 @@
-## Welcome to GitHub Pages
+# Java Important Questions
 
-You can use the [editor on GitHub](https://github.com/nikhleshagrawal/java_important_questions/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+This page is evolving. 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+This page will have some important java questions which are learned by experience.
 
-### Markdown
+## In Jav8, why we have default method in Interface?
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+The reason we have default methods in interfaces is to allow the developers to add new methods to the interfaces without affecting the classes that implements these interfaces.
 
-```markdown
-Syntax highlighted code block
+### Why default method?
 
-# Header 1
-## Header 2
-### Header 3
+For example, if several classes such as A, B, C and D implements an interface XYZInterface then if we add a new method to the XYZInterface, we have to change the code in all the classes(A, B, C and D) that implements this interface. In this example we have only four classes that implements the interface which we want to change but imagine if there are hundreds of classes implementing an interface then it would be almost impossible to change the code in all those classes. This is why in java 8, we have a new concept “default methods”. These methods can be added to any existing interface and we do not need to implement these methods in the implementation classes mandatorily, thus we can add these default methods to existing interfaces without breaking the code.
 
-- Bulleted
-- List
+## Why a variable inside Lambda must be Final or Effective Final?
 
-1. Numbered
-2. List
+The above problem arises due to Java 8 Language Specification, §15.27.2 which says :
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+``` 
+Any local variable, formal parameter, or exception parameter used but not declared in a lambda expression
+must either be declared final or be effectively final (§4.12.4),
+or a compile-time error occurs where the use is attempted.
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+The JLS mentions why in §15.27.2:
 
-### Jekyll Themes
+```
+The restriction to effectively final variables prohibits access to dynamically-changing local variables, whose capture would likely introduce concurrency problems.
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/nikhleshagrawal/java_important_questions/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+## Difference between Final and Effective Final:
 
-### Support or Contact
+A variable is final or effectively final when it's initialized once and is never mutated in its owner class; we can't initialize it in loops or inner classes.
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Final: final int x;
+x = 3;
+
+Effectively Final: A keyword before a variable makes it final and no final keyword before a variable make it effectively final provided we never change its value.
+int x;
+x = 4; //value is never changed ever, so kind of make=ing it effectively final.
+
+A keyword before a variable makes it final and no final keyword before a variable meke it effectively final provided we never change its value.
+
