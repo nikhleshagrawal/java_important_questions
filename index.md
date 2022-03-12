@@ -142,8 +142,15 @@ Supplier – takes nothing returns Object of type T
 
 UnaryOperator – takes T returns T
 
-BinaryOperator – takes T,R returns T
+BinaryOperator<T> – Represents an operation upon two operands of the same type, producing a result of the same type as the operands
+BinaryOperator<Integer> binaryOpt = (s1, s2) -> s1 + s2;
+Example: stream.reduce
 
-Function – takes T,R returns R
+Function<T,R> – Represents a function that accepts one argument and produces a result.
+Type parameters:
+<T> – the type of the input to the function
+<R> – the type of the result of the function
+Function<String, String> func = (s1) -> s1 + "-" + s1;
+Example: stream.map
 
 Predicate – takes T return Boolean
