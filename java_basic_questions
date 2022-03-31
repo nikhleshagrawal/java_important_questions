@@ -385,10 +385,114 @@ A is locked by X, which is waiting for Y
 63 . What are the important methods in Java for inter-thread communication?
 wait(), notify(), notifyAll join
 
+64. ThreadLocal
+
+local copy of the object for a particualr thread
+basically its an implementation of Map which stores thread id and object
+
+65. Reentrant lock
+
+it has same basic behaviour has sychronized block but with extra flexibility. 
+lock can be unlock at different scope
+use Condition condition = lock.newCondition() to 
+equivalent to wait() -> condition.await()
+equivalent to notify() -> condition.signal()
+we can define fairness policy, reentrant lock has a constructor which access boolean flag. 
+with fairness policy true, locks favor granting access to the longest waiting thread otherwise lock does not gaurantee any particulatar access order
+
+ReentrantReadWriteLock
+
+we can have readLock and writeLock
+only one thread can go inside writeLock
+multiple threads can go into read lock
+if atleast one thread has acquired a read lock then no other thread can go into write lock
+in other words, either Readlock is being used by n threads or writelock is being used by 1 thread but never both at the same time
+newCondition is allowed only on write lock
+
+66. Types of ThreadPool
+
+FixedThreadPool
+initial size = constuctor arg
+maxpoolsize = corepoolsize
+LinkedBlockingQueue
+
+cpu intensive task - ideal pool size - cpu core count
+allocate fixed thread pool based on Runtime.getRuntime().availableProcessors() to maximize utilization of cpu.
+
+IO intensive task - ideal pool size - High
+Task like DB, http or file access wait for the OS to get the response, in these case we can have large size of the pool
+
+CachedThreadPool - synchronous queue
+create thread pool in runtime. increase and decrease pool size . 
+initial size = 0
+maxpoolsize = Int.maxvalue
+Synchronous queue
+
+ScheduleThreadPool
+schedule after certain delay - schedule to tun after 10 seconds delay
+scheduleAtFixedRate - schedule to run repeatedly every 10 seconds
+sceduleAtFixedDelay - complete the task and wait for fixed delay to execute again
+initial size = constuctor arg
+maxpoolsize = Int.maxvalue
+DelayedWorkQueue
+
+
+SingleThreadExecutor - pool size of 1 - used when we have to execute task in particular order
+initial size = 1
+maxpoolsize = 1
+LinkedBlockingQueue
+
+67 - Rejection Policy
+AbortPolicy - submitting new tasks throws RejectedExecutionException
+DiscardPolicy - submitting new tasks silently discards it
+DiscardOldestPolicy - submitting new tasks drop existing oldest task and new task is added to the queue
+CallerRunsPolicy - submitting new task will execute the task on the called thread itself
+
+68. Lifecycle
+
+service.shutdown - any task submitted after this will throw an exception
+service.isShutdown - check if the shutdown has began
+service.isTerminate  - will return true if all tasks are compeleted
+service.awaitTermination - block until all tasks are completed or if timeout occurs
+service.shutdownnow - will intiate shutdown and return all queued task
+
+69. CountDownLatch
+UseCase -> consolidate data from multiple sources to single file
+1) main thread starts n threads with countdown latch new CountDownLatch(3)
+2) main thread waits for number of counts to be finished to continue running rest of the code -> latch.await()
+3) called thread brings the count down -> latch.countdown()
+
+latch.await() -> waits for all the threads to complete to open the latch
+latch.countdown() -> brings the count down, flag that indicates the task is completed and brings the count down
+with each latch.countdown(), the counter is decremented, once the counter is 0, it can not be initialized back to original value.
+
+70. CyclicBarrier
+UseCase -> to run set of tasks together multiple time. with this, the threads wait for each other to complete to execute rest of the code
+1) main thread starts n threads with a barrier involving n parties -> new CyclicBarrier(3)
+2) participating thread waits for the other threads to complete -> barrier.await()
+
+cyclicbarrier can be run in loop as count of parties will be reset to original value after all the participating threads reaches the await stage.
+
+- Latch has a countDown() and await() methods. When countDown() is invoked n times, all the awaiting threads are notified. Cyclic barrier similarity has await() method, which when invoked by n threads, all waiting threads are notified and optionally a Runnable() is also invoked
+- The countDown() method can be invoked by one thread or multiple threads whereas in case of CB n threads need to await() before it notifies all
+- CB can be reset, but Latch is not resettable
+- CB follows an all-or-none symantec. If a thread which is waiting for signal throws an exception then all the waiting threads will get a BrokenBarrier exception or a InterruptedException
+
+71. Java IO vs NIO
+    Basic concepts of NIO - channel, selector and buffer
+    - IO is blocking, NIO non-blocking 
+    - IO is stream based, NIO is buffer based
+    - Streams can't be traversed back and forth, to support this, streams have to be cached in a buffer
+    - Streams are usually read-only or write-only. Channels are both read/write
+    - NIO uses buffers, but to determine if data is fully delivered we have to manually check its contents
+    - Because NIO is non-blocking the thread can request to get available data, and then continue with other NIO data
+    - NIO supports selectors, which means that a single thread can subscribe to multiple channels and multiplex available data
+    - Channels always read from buffer and write to buffer
+
 
 Functional Programming - Lamdba expressions and Streams
 
-64 . What is a stream?
+72 . What is a stream?
 A stream is a sequence of objects that supports various methods which can be pipelined to produce the desired result.
 
 - intermediate operations
@@ -397,10 +501,10 @@ These operations are used to pipeline other methods and to transform into the ot
 - terminal operations
 a terminal operation is always the last operation in a Stream pipeline.
 
-65. What are lambda expressions?
+73. What are lambda expressions?
 Lamdas are expressions that are shorthand for anonymous inner classes & adapt to a functional interface
 
-66 . Functional interface?
+74. Functional interface?
 A functional interface is an interface with one single abstract method (default methods do not count), no more, no less
 Consumer – takes one argument returns nothing
 @FunctionalInterface
@@ -439,20 +543,20 @@ Predicate<Integer> predicate=new Predicate<Integer>() {
    };
 
 
-67. Immutable Class
+75. Immutable Class
 Make all fields final
 No setter methods
 Inside getter methods, return a clone of the member variable
-Implement cloneable, override clone method and throw CloneNotSupported
+Implement cloneable, override clone method and throw CloneNotSupported if you want to throw custom exception otherwise it is needed as we have not implemented class as cloneable. object class by default throws clonenotsupportedexception
 Implement serializable, override readResolve method
 To protect, reflection use enum
 Wrapper classes are immutable
 
-68. Optional Classes
+76. Optional Classes
 The main purpose of Optional, as designed by its creators, is to be a return type of method that previously would return null. Such methods would require us to write boilerplate code to check the return value, and we could sometimes forget to do a defensive check. In Java 8, an Optional return type explicitly requires us to handle null or non-null wrapped values differently
 
 
-69. What are the new features between Java 11 and 17?
+77. What are the new features between Java 11 and 17?
 
 records - equivalent to @Data of lombok
 
